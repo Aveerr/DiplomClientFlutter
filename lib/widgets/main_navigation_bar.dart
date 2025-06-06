@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '../screens/playlistScreen.dart';
-import '../screens/facoriteMusicScreen.dart';
-import '../screens/searchMusicScreen.dart';
-
+import 'package:music_player/feature/favorites/presentation/facorites_screen.dart';
+import 'package:music_player/feature/playlist/presentation/playlist_screen.dart';
+import 'package:music_player/feature/search/presentation/search_music_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -47,10 +46,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         ],
         currentIndex: _selectedIndex,
         unselectedItemColor: Colors.white,
-        selectedItemColor: Colors.red,
+        selectedItemColor: Colors.yellow,
         backgroundColor: Colors.transparent,
         onTap: _onItemTapped,
       ),
     );
   }
-} 
+}
