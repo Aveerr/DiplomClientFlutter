@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart';
 import 'package:logging/logging.dart';
 import 'package:music_player/core/locator.dart';
 import 'package:music_player/core/widgets/playlist_cell.dart';
-import 'package:music_player/feature/player/bloc.dart';
+import 'package:music_player/feature/favorites/domain/bloc.dart';
+import 'package:music_player/feature/player/domain/bloc.dart';
 import 'package:music_player/feature/search/domain/bloc.dart';
 
 class SearchMusicScreen extends StatefulWidget {
@@ -18,8 +20,10 @@ class SearchMusicScreen extends StatefulWidget {
 class _SearchMusicScreenState extends State<SearchMusicScreen> {
   late final SearchBloc _bloc;
   late final PlayerBloc _playerBloc;
+  late final FavoritesBloc _favoritesBloc;
 
   final TextEditingController _searchController = TextEditingController();
+  Timer? _timer;
   String _searchQuery = '';
   final _logger = Logger('SearchMusicScreen');
 
@@ -36,10 +40,20 @@ class _SearchMusicScreenState extends State<SearchMusicScreen> {
 
     _bloc = instanceOf();
     _playerBloc = instanceOf();
-    _searchController.addListener(_searchListener);
+    _favoritesBloc = instanceOf();
+    // _searchController.addListener(_searchListener);
   }
 
-  void _searchListener() => _bloc.add(SearchPlaylistEvent(_searchController.text));
+  void _searchListener() {
+    if (!(_timer?.isActive ?? true)) {
+      _timer?.cancel();
+      _timer = null;
+    }
+
+    _timer = Timer(Duration(seconds: 2), () {
+      _bloc.add(SearchPlaylistEvent(_searchController.text));
+    });
+  }
 
   @override
   void dispose() {
@@ -54,36 +68,71 @@ class _SearchMusicScreenState extends State<SearchMusicScreen> {
       _searchQuery = _searchController.text;
     });
     _logger.info('Searching for: $_searchQuery');
-    // TODO: Implement actual search functionality
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: _buildSearchBar(),
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("assets/images/back4.png"),
+          repeat: ImageRepeat.repeat,
+        ),
       ),
-      body: BlocBuilder<SearchBloc, SearchState>(
-        bloc: _bloc,
-        builder: (context, state) {
-          print('======= state = ${state.songs.length}');
-          return BlocBuilder<PlayerBloc, PlayerState>(
-            bloc: _playerBloc,
-            builder: (context, playerState) {
-              return ListView.builder(
-                itemCount: state.songs.length,
-                itemBuilder: (context, index) {
-                  final song = state.songs[index];
-                  print('====== a = ${playerState.playingSong?.songTitle} b = ${song.songTitle}');
-                  return PlaylistCell(
-                    title: song.songTitle,
-                    isFavorite: false,
-                    isPlaying: playerState.playingSong?.songTitle == song.songTitle,
-                    onLikePressed: () {},
-                    onPlayPressed: () async => _playerBloc.add(PlayEvent(song)),
-                  );
-                },
+      child: BlocBuilder<PlayerBloc, PlayerState>(
+        bloc: _playerBloc,
+        builder: (context, playerState) {
+          print('========= c = ${playerState.playingSong?.songTitle}');
+          return BlocBuilder<FavoritesBloc, FavoritesState>(
+            bloc: _favoritesBloc,
+            builder: (context, favouriteState) {
+              return Scaffold(
+                appBar: AppBar(
+                  backgroundColor: Colors.black,
+                  title: _buildSearchBar(),
+                ),
+                floatingActionButton: playerState.playingSong != null
+                    ? PlaylistCell(
+                        title: playerState.playingSong!.songTitle,
+                        isFavorite: false,
+                        isPlaying: playerState.isPlaying,
+                        onLikePressed: () =>
+                            _favoritesBloc.add(SwitchFavouriteEvent(playerState.playingSong!)),
+                        onPlayPressed: () async =>
+                            _playerBloc.add(PlayEvent(playerState.playingSong!)),
+                      )
+                    : null,
+                floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+                body: BlocBuilder<SearchBloc, SearchState>(
+                  bloc: _bloc,
+                  builder: (context, state) {
+                    print('======= state = ${state.songs.length}');
+                    if (state.isLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    return ListView.builder(
+                      itemCount: state.songs.length,
+                      itemBuilder: (context, index) {
+                        final song = state.songs[index];
+                        print(
+                            '====== a = ${playerState.playingSong?.songTitle} b = ${song.songTitle}');
+                        return PlaylistCell(
+                          title: song.songTitle,
+                          isFavorite: favouriteState.favourites
+                              .where((f) => f.songTitle == song.songTitle)
+                              .isNotEmpty,
+                          isPlaying: playerState.playingSong?.songTitle == song.songTitle &&
+                              playerState.isPlaying,
+                          onLikePressed: () => _favoritesBloc.add(SwitchFavouriteEvent(song)),
+                          onPlayPressed: () async => _playerBloc.add(PlayEvent(song)),
+                        );
+                      },
+                    );
+                  },
+                ),
               );
             },
           );
@@ -107,7 +156,7 @@ class _SearchMusicScreenState extends State<SearchMusicScreen> {
       ),
       onTapOutside: (event) => FocusScope.of(context).unfocus(),
       onSubmitted: (value) {
-        _handleSearch();
+        _searchListener();
       },
     );
   }

@@ -27,26 +27,36 @@ class PlaylistCell extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           color: Colors.yellow,
         ),
-        padding: const EdgeInsets.all(12),
+        // padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(4),
+            IconButton(
+              icon: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
               ),
-              child: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+              onPressed: onPlayPressed,
             ),
             const SizedBox(width: 8),
-            Expanded(child: Text(title)),
-            SvgPicture.asset(
-              SvgPaths.like,
-              colorFilter: ColorFilter.mode(
-                isFavorite ? Colors.black : Colors.black45,
-                BlendMode.srcIn,
+            Expanded(
+                child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Text(title),
+            )),
+            IconButton(
+              icon: SvgPicture.asset(
+                SvgPaths.like,
+                colorFilter: ColorFilter.mode(
+                  isFavorite ? Colors.black : Colors.black45,
+                  BlendMode.srcIn,
+                ),
               ),
+              onPressed: onLikePressed,
             ),
           ],
         ),

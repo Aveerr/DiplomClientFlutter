@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/feature/favorites/presentation/facorites_screen.dart';
+import 'package:music_player/feature/favorites/presentation/favorites_screen.dart';
 import 'package:music_player/feature/playlist/presentation/playlist_screen.dart';
 import 'package:music_player/feature/search/presentation/search_music_screen.dart';
 

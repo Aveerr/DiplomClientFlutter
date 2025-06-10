@@ -1,0 +1,36 @@
+import 'package:hive/hive.dart';
+import 'package:music_player/feature/playlist/data/song.dart';
+
+part 'playlist_tdo.g.dart';
+
+@HiveType(typeId: 1)
+class PlaylistTdo {
+  PlaylistTdo({
+    required this.songTitle,
+    required this.downloadUrl,
+  });
+
+  @HiveField(0)
+  String songTitle;
+
+  @HiveField(1)
+  String downloadUrl;
+}
+
+extension ToModelPlaylistsExtension on List<PlaylistTdo>? {
+  List<Song> toModel() =>
+      this
+          ?.map((song) => Song(
+                songTitle: song.songTitle,
+                downloadUrl: song.downloadUrl,
+              ))
+          .toList() ??
+      [];
+}
+
+extension ToModelPlaylistExtension on PlaylistTdo? {
+  Song toModel() => Song(
+        songTitle: this?.songTitle ?? '',
+        downloadUrl: this?.downloadUrl ?? '',
+      );
+}

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:music_player/feature/playlist/data/songs_response.dart';
@@ -14,27 +15,28 @@ class MusicRepository {
     required String name,
   }) async {
     // Замените на ваш URL (localhost или IP)
-    final url = Uri.parse('http://localhost:3000/api/parse/');
+    final url = 'http://62.60.149.142:3000/api/parse/';
     // Или для теста с реальным IP (если сервер доступен в сети):
     // final url = Uri.parse('http://192.168.1.100:3000/api/parse/');
 
     // Тело запроса в формате JSON
     final requestBody = {
-      "songName": "имя музыки", // Замените на реальное название
+      "songName": name, // Замените на реальное название
       "parserType": "mp3beast" // Или другой тип парсера
     };
 
     try {
       print("Отправка POST-запроса...");
 
-      // // Делаем POST-запрос с JSON-заголовком
-      // final response = await http.post(
+      // Делаем POST-запрос с JSON-заголовком
+      // final response = await Dio().get(
       //   url,
-      //   headers: {
+      //   data: requestBody,
+      //   queryParameters: {
       //     'Content-Type': 'application/json', // Указываем тип JSON
       //   },
-      //   body: jsonEncode(requestBody), // Кодируем Map в JSON-строку
       // );
+      // print('========= response = ${response.data}');
 
       final fakeResponse = {
         "message": "success",
@@ -72,20 +74,21 @@ class MusicRepository {
         ]
       };
 
+      // print('======== response = ${response.data}');
       // Проверяем статус ответа
       // if (response.statusCode == 200) {
       print("Успешный ответ (200):");
-      // final jsonData = jsonDecode(response.body);
-      // print("Полный ответ: $jsonData");
-      //
-      // // Пример вывода конкретных полей (если знаете структуру ответа)
-      // if (jsonData.containsKey('downloadUrl')) {
-      //   print("Ссылка для скачивания: ${jsonData['downloadUrl']}");
-      // }
-      return Right(SongsResponse.fromJson(fakeResponse));
+      final jsonData = fakeResponse; //response.data;
+      print("Полный ответ: $jsonData");
+
+      // Пример вывода конкретных полей (если знаете структуру ответа)
+      if (jsonData.containsKey('downloadUrl')) {
+        print("Ссылка для скачивания: ${jsonData['downloadUrl']}");
+      }
+      return Right(SongsResponse.fromJson(jsonData));
       // } else {
       //   print("Ошибка сервера: ${response.statusCode}");
-      //   print("Тело ошибки: ${response.body}");
+      //   print("Тело ошибки: ${response.data}");
       //
       //   return Left(response.statusCode);
       // }
