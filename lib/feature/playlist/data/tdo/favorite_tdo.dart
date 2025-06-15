@@ -8,6 +8,7 @@ class FavoriteTdo {
   FavoriteTdo({
     required this.songTitle,
     required this.downloadUrl,
+    required this.musicLogo,
   });
 
   @HiveField(0)
@@ -15,6 +16,9 @@ class FavoriteTdo {
 
   @HiveField(1)
   String downloadUrl;
+
+  @HiveField(2)
+  String musicLogo;
 }
 
 extension ToModelFavoritesExtension on List<FavoriteTdo>? {
@@ -23,6 +27,7 @@ extension ToModelFavoritesExtension on List<FavoriteTdo>? {
           ?.map((song) => Song(
                 songTitle: song.songTitle,
                 downloadUrl: song.downloadUrl,
+                musicLogo: song.musicLogo,
               ))
           .toList() ??
       [];
@@ -32,5 +37,6 @@ extension ToModelFavoriteExtension on FavoriteTdo? {
   Song toModel() => Song(
         songTitle: this?.songTitle ?? '',
         downloadUrl: this?.downloadUrl ?? '',
+        musicLogo: this?.musicLogo ?? '',
       );
 }

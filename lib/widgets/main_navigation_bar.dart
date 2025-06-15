@@ -14,21 +14,21 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
 
   static const List<Widget> _screens = [
-    HomeScreen(),
-    FavoriteMusicScreen(),
-    SearchMusicScreen(),
+    HomeScreen(), //Экран с плэйлистами
+    FavoriteMusicScreen(), //экран с люимой музыкой
+    SearchMusicScreen(), // экран с поиском музыки
   ];
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _selectedIndex = index; // выбранный экран (его индекс)
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex],
+      body: _screens[_selectedIndex], //выбирается экран который будет показываться
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -45,9 +45,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        unselectedItemColor: Colors.white,
-        selectedItemColor: Colors.yellow,
-        backgroundColor: Colors.transparent,
+        unselectedItemColor: Colors.deepOrangeAccent,
+        selectedItemColor: Colors.orange,
+        backgroundColor: Colors.white,
         onTap: _onItemTapped,
       ),
     );

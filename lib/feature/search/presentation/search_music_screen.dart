@@ -17,10 +17,11 @@ class SearchMusicScreen extends StatefulWidget {
   State<SearchMusicScreen> createState() => _SearchMusicScreenState();
 }
 
-class _SearchMusicScreenState extends State<SearchMusicScreen> {
+class _SearchMusicScreenState extends State<SearchMusicScreen> with SingleTickerProviderStateMixin {
   late final SearchBloc _bloc;
   late final PlayerBloc _playerBloc;
   late final FavoritesBloc _favoritesBloc;
+  late final AnimationController _animationController;
 
   final TextEditingController _searchController = TextEditingController();
   Timer? _timer;
@@ -35,13 +36,17 @@ class _SearchMusicScreenState extends State<SearchMusicScreen> {
       debugPrint('${record.level.name}: ${record.time}: ${record.message}');
     });
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.black,
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
     ));
 
     _bloc = instanceOf();
     _playerBloc = instanceOf();
     _favoritesBloc = instanceOf();
-    // _searchController.addListener(_searchListener);
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
   }
 
   void _searchListener() {
@@ -50,7 +55,7 @@ class _SearchMusicScreenState extends State<SearchMusicScreen> {
       _timer = null;
     }
 
-    _timer = Timer(Duration(seconds: 2), () {
+    _timer = Timer(const Duration(seconds: 2), () {
       _bloc.add(SearchPlaylistEvent(_searchController.text));
     });
   }
@@ -60,6 +65,7 @@ class _SearchMusicScreenState extends State<SearchMusicScreen> {
     _searchController
       ..removeListener(_searchListener)
       ..dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -73,66 +79,135 @@ class _SearchMusicScreenState extends State<SearchMusicScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/images/back4.png"),
-          repeat: ImageRepeat.repeat,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white,
+            Colors.orange.shade200,
+          ],
         ),
       ),
       child: BlocBuilder<PlayerBloc, PlayerState>(
         bloc: _playerBloc,
         builder: (context, playerState) {
-          print('========= c = ${playerState.playingSong?.songTitle}');
           return BlocBuilder<FavoritesBloc, FavoritesState>(
             bloc: _favoritesBloc,
             builder: (context, favouriteState) {
               return Scaffold(
-                appBar: AppBar(
-                  backgroundColor: Colors.black,
-                  title: _buildSearchBar(),
+                extendBody: true,
+                backgroundColor: Colors.transparent,
+                body: SafeArea(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: _buildSearchBar(),
+                      ),
+                      Expanded(
+                        child: BlocBuilder<SearchBloc, SearchState>(
+                          bloc: _bloc,
+                          builder: (context, state) {
+                            if (state.isLoading) {
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              );
+                            }
+
+                            if (state.songs.isEmpty && _searchQuery.isNotEmpty) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.search_off,
+                                      size: 64,
+                                      color: Colors.white.withOpacity(0.5),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'No results found',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Try different search terms',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black45,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+
+                            return ListView.builder(
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                              itemCount: state.songs.length,
+                              itemBuilder: (context, index) {
+                                final song = state.songs[index];
+                                return PlaylistCell(
+                                  title: song.songTitle,
+                                  isFavorite: favouriteState.favourites
+                                      .where((f) => f.songTitle == song.songTitle)
+                                      .isNotEmpty,
+                                  isPlaying: playerState.playingSong?.songTitle == song.songTitle &&
+                                      playerState.isPlaying,
+                                  onLikePressed: () => _favoritesBloc.add(SwitchFavouriteEvent(song)),
+                                  onPlayPressed: () async => _playerBloc.add(PlayEvent(song)),
+                                  musicLogo: song.musicLogo,
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 floatingActionButton: playerState.playingSong != null
-                    ? PlaylistCell(
-                        title: playerState.playingSong!.songTitle,
-                        isFavorite: false,
-                        isPlaying: playerState.isPlaying,
-                        onLikePressed: () =>
-                            _favoritesBloc.add(SwitchFavouriteEvent(playerState.playingSong!)),
-                        onPlayPressed: () async =>
-                            _playerBloc.add(PlayEvent(playerState.playingSong!)),
+                    ? AnimatedSlide(
+                        duration: const Duration(milliseconds: 300),
+                        offset: Offset.zero,
+                        child: Container(
+                          width: 440,
+                          height: 100,
+                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.deepOrangeAccent.withOpacity(0.0),
+                                Colors.white.withOpacity(0.0),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(35),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 20,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: PlaylistCell(
+                            title: playerState.playingSong!.songTitle,
+                            isFavorite: false,
+                            isPlaying: playerState.isPlaying,
+                            onLikePressed: () => _favoritesBloc.add(SwitchFavouriteEvent(playerState.playingSong!)),
+                            onPlayPressed: () async => _playerBloc.add(PlayEvent(playerState.playingSong!)),
+                            musicLogo: playerState.playingSong!.musicLogo,
+                          ),
+                        ),
                       )
                     : null,
                 floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-                body: BlocBuilder<SearchBloc, SearchState>(
-                  bloc: _bloc,
-                  builder: (context, state) {
-                    print('======= state = ${state.songs.length}');
-                    if (state.isLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-
-                    return ListView.builder(
-                      itemCount: state.songs.length,
-                      itemBuilder: (context, index) {
-                        final song = state.songs[index];
-                        print(
-                            '====== a = ${playerState.playingSong?.songTitle} b = ${song.songTitle}');
-                        return PlaylistCell(
-                          title: song.songTitle,
-                          isFavorite: favouriteState.favourites
-                              .where((f) => f.songTitle == song.songTitle)
-                              .isNotEmpty,
-                          isPlaying: playerState.playingSong?.songTitle == song.songTitle &&
-                              playerState.isPlaying,
-                          onLikePressed: () => _favoritesBloc.add(SwitchFavouriteEvent(song)),
-                          onPlayPressed: () async => _playerBloc.add(PlayEvent(song)),
-                        );
-                      },
-                    );
-                  },
-                ),
               );
             },
           );
@@ -142,22 +217,49 @@ class _SearchMusicScreenState extends State<SearchMusicScreen> {
   }
 
   Widget _buildSearchBar() {
-    return TextField(
-      controller: _searchController,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        hintText: 'Search Music',
-        hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
-        border: InputBorder.none,
-        suffixIcon: IconButton(
-          icon: const Icon(Icons.search, color: Colors.white),
-          onPressed: _handleSearch,
-        ),
+    return Container(
+      height: 56,
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      onTapOutside: (event) => FocusScope.of(context).unfocus(),
-      onSubmitted: (value) {
-        _searchListener();
-      },
+      child: TextField(
+        controller: _searchController,
+        style: const TextStyle(color: Colors.black87, fontSize: 16),
+        decoration: InputDecoration(
+          hintText: 'Search songs...',
+          hintStyle: TextStyle(
+            color: Colors.black45,
+            fontSize: 16,
+          ),
+          prefixIcon: Icon(
+            Icons.search,
+            color: Colors.deepOrangeAccent,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.9),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+        onTapOutside: (event) => FocusScope.of(context).unfocus(),
+        onSubmitted: (value) {
+          _searchListener();
+        },
+        onChanged: (value) {
+          setState(() {});
+          _searchListener();
+        },
+      ),
     );
   }
 }

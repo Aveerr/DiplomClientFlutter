@@ -8,6 +8,8 @@ class Song with _$Song {
   factory Song({
     @Default('') @JsonKey(name: 'songTitle') String songTitle,
     @Default('') @JsonKey(name: 'downloadUrl') String downloadUrl,
+    @Default(0) @JsonKey(name: 'musicLength') int musicLength,
+    @Default('') @JsonKey(name: 'musicLogo') String musicLogo,
   }) = _Song;
 
   factory Song.fromJson(Map<String, dynamic> json) => _$SongFromJson(json);

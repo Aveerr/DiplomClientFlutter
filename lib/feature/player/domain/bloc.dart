@@ -9,16 +9,27 @@ import 'package:music_player/feature/playlist/data/song.dart';
 class PlayerState {
   final Song? playingSong;
   final bool isPlaying;
+  final Duration position;
+  final Duration duration;
 
   const PlayerState({
     this.playingSong,
     this.isPlaying = false,
+    this.position = Duration.zero,
+    this.duration = Duration.zero,
   });
 
-  PlayerState copyWith({Song? playingSong, bool? isPlaying}) {
+  PlayerState copyWith({
+    Song? playingSong,
+    bool? isPlaying,
+    Duration? position,
+    Duration? duration,
+  }) {
     return PlayerState(
-      playingSong: playingSong,
+      playingSong: playingSong ?? this.playingSong,
       isPlaying: isPlaying ?? this.isPlaying,
+      position: position ?? this.position,
+      duration: duration ?? this.duration,
     );
   }
 }
@@ -37,6 +48,24 @@ class PlayEvent extends PlayerEvent {
   const PlayEvent(this.song);
 }
 
+class PauseEvent extends PlayerEvent {
+  const PauseEvent();
+}
+
+class PreviousEvent extends PlayerEvent {
+  const PreviousEvent();
+}
+
+class NextEvent extends PlayerEvent {
+  const NextEvent();
+}
+
+class SeekEvent extends PlayerEvent {
+  final Duration position;
+
+  const SeekEvent(this.position);
+}
+
 class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   final AudioPlayer _player;
   final PlaylistMiddleware _playlistMiddleware;
@@ -49,6 +78,10 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   ) : super(const PlayerState()) {
     on<InitializePlayerEvent>(_handleInitiailizeFavoritesEvent);
     on<PlayEvent>(_handlePlayEvent);
+    on<PauseEvent>(_handlePauseEvent);
+    on<PreviousEvent>(_handlePreviousEvent);
+    on<NextEvent>(_handleNextEvent);
+    on<SeekEvent>(_handleSeekEvent);
 
     add(const InitializePlayerEvent());
   }
@@ -61,6 +94,16 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     _subs = _player.errorStream.listen((e) {
       print('A stream error occurred: $e');
     });
+
+    _player.positionStream.listen((position) {
+      emit(state.copyWith(position: position));
+    });
+
+    _player.durationStream.listen((duration) {
+      if (duration != null) {
+        emit(state.copyWith(duration: duration));
+      }
+    });
   }
 
   Future<void> _handlePlayEvent(PlayEvent event, Emitter<PlayerState> emit) async {
@@ -68,7 +111,6 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     if (_lastSong?.songTitle != event.song.songTitle) {
       print('========= 1');
       _playlistMiddleware.addPlaylist(event.song);
-      // await _player.clearAudioSources();
       _lastSong = event.song;
       emit(state.copyWith(playingSong: event.song, isPlaying: true));
 
@@ -85,6 +127,25 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
         await _player.play();
       }
     }
+  }
+
+  Future<void> _handlePauseEvent(PauseEvent event, Emitter<PlayerState> emit) async {
+    if (state.isPlaying) {
+      emit(state.copyWith(isPlaying: false));
+      await _player.pause();
+    }
+  }
+
+  Future<void> _handlePreviousEvent(PreviousEvent event, Emitter<PlayerState> emit) async {
+    // TODO: Implement previous track logic
+  }
+
+  Future<void> _handleNextEvent(NextEvent event, Emitter<PlayerState> emit) async {
+    // TODO: Implement next track logic
+  }
+
+  Future<void> _handleSeekEvent(SeekEvent event, Emitter<PlayerState> emit) async {
+    await _player.seek(event.position);
   }
 
   @override

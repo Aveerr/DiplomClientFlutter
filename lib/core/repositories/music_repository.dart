@@ -42,34 +42,28 @@ class MusicRepository {
         "message": "success",
         "results": [
           {
-            "songTitle": "Трек: Metallica The Unforgiven Official Music Video",
-            "downloadUrl":
-                "https://cdn1.odt-converter.com/dl?hash=P1FwgNXazAt7L4B%2Byo55%2FG9GLSt%2Ftg3AWdwA2IOtYc6agHWYROrva0TuiPod8CSTAtxHZ8nv9wlBpZ5womtYNyWIUegA7QfG7duKm2FuLcnBDsACN21lJ7YavqEVWokm9hcYokR2fj%2F%2F1Stz%2FnnAKw%2Be8QFzSXOJcKSqUWZ5Qdl17MDFd766ZdfeftnIkKyCfZ36R1fhCQ9Cgzj9Tb6GjVlhUVFEHLzgToJvs%2BaMxLz3K8VHVVUvXBVm24UokICx"
+            "musicLogo": "https://mp3beast.cc/img/crop/NDgzY0RMLUUtREM.jpg",
+            "musicLength": 331,
+            "songTitle": "Трек: Metallica Enter Sandman Official Music Video",
+            "downloadUrl": "https://cdn1.odt-converter.com/dl?hash=sdWX5LYJagRRGEllsNPBvKGOQryaclU3nTWulKB8QXcOJFFnJaagbAkipwGd9UZdsakttyiCASQlmBGMf1U%2B%2BvM3NiQxOQ%2FKsN3xy%2BbSYIMN8AckJBKIZsSAJ1K3F5W%2B6zfrOoqNAf09V0R9dQ8mzDfiuibN31u402XWPiWVnOmUzVwQ0NCkzZWUUSqF57I33vx2BTmuZb7Di%2BRIRNaALBGulnNOLu%2F4FdyaP8oekjQ%3D"
           },
           {
-            "songTitle": "Трек: For Whom The Bell Tolls Remastered",
-            "downloadUrl":
-                "https://cdn5.odt-converter.com/dl?hash=9Tu05bDXcJZ8nUg0sATTnfDpewO%2BD43dIigItq9GEC7CAb3NGe3AQZblQfjlO%2Fk%2FzzYSvGFmpW8SLet8t%2F1QjBUn6PPCjCLKLF09V%2F844GORcUIG2mbEiChnMfVIKsTkguVRkAbDq9DPIyQpINpLAB1%2Fp1%2FF7vDz%2BBLnJVfSa2jkOXWG7F%2B88Z9Wys7l1Cjn4DjbXDtjUzwYoE78m1DTmUDmdsW15cf%2Bxn5O6Jc5SLI%3D"
+            "musicLogo": "https://mp3beast.cc/img/crop/MDYtZ0Z6NE11Wlg.jpg",
+            "musicLength": 332,
+            "songTitle": "Трек: Enter Sandman Remastered",
+            "downloadUrl": "https://cdn5.odt-converter.com/dl?hash=QSb8mfzO61W5RbVuyWF39aWeB%2F%2BIgMMHOm8DzfEq%2FMBeCWjMgvzgsyuJJmQNr7V%2FjnA1V971J9SlBbxnj68DEfoKI0SnFTpcG9FnDS0T0a2L2ak4Hz1HDSHIPe%2FOP8vg%2B0mlskKpkvx4KElXtsVQFnKStjyHSS8ogn2zIZuuKr2cdLtgOugQjN6t8ORIZDSbrbbptDOBMcbk7sLuIcKcKw%3D%3D"
           },
           {
-            "songTitle": "Трек: Master Of Puppets Remastered",
-            "downloadUrl":
-                "https://cdn5.odt-converter.com/dl?hash=2RjxNzJl0P4Y44%2BG8U0s1b%2FJy3YMsoRCfdDjA9QVdvWXwkuA95o8CcS1fmprvUfJfxDBvVCQSkyT7I5Q1YyzDh6O1EbK0c6iVLS6HYoxODCzh%2BCOOJ%2BngMXs6fBSiTw9iwhpjy0wCvXHG%2BJJM3IvslVWwB1uaKJlM0nuqdXwKi7uWXpeM4xAVMrUk5Eu9Hp%2FJfbaQry0NFbZqCOrHTl8iQ%3D%3D"
+            "musicLogo": "https://mp3beast.cc/img/crop/d0x4ZmpEMXliNzg.jpg",
+            "musicLength": 407,
+            "songTitle": "Трек: Metallica Enter Sandman Live In Mexico City Orgullo Pasión Y Gloria",
+            "downloadUrl": "https://cdn5.odt-converter.com/dl?hash=flWn%2BPJ3OTX2Ca2d%2BbRJ7mLJDDDAPO1Hm51kvYkoFEnCPZMVFmF2Jdb%2Baal4piE%2BK3r7IDOEj%2Beai2VHnAnDr7jyV5G9O7mhwaGO3hHMkFOsgpm87VJSyh7MpBOHZ7rSS9Q0l7gPPOCWOln9%2B78IVPKhsgG%2BUljYCuFj7FVjiHW8E2b%2F1SuLNu0ZWacssfjJ3mPvU%2BUY2qnET8TAm6gB1BOfhjn359LvaLTpivyw8Bp3rAQTPF5Z2inkgLgu3hkscw0sdsm%2B65TR0Rl35ZAQmw%3D%3D"
           },
           {
-            "songTitle": "Трек: The Unforgiven",
-            "downloadUrl":
-                "https://cdn4.odt-converter.com/dl?hash=Ybkqq7yY4hmN%2B2F8IGwiJ06j8KpsTorJjvAjmhiFcU%2FtvBT0TIdllfaQ0ahlfBb3osgvL6nsGv5k2yuTVkFPeIb8N6NNkCzOFyPlUURYWtdJiKqSUqM3rS2DnWZ5MUxk%2F%2BVCBWIMfzZELym20TbAIVY0RUyM6191B%2BplBuR6KUYY7VmwYnQM5LQIvcYlZ8u%2F"
-          },
-          {
-            "songTitle": "Трек: Metallica The Day That Never Comes Official Music Video",
-            "downloadUrl":
-                "https://cdn3.odt-converter.com/dl?hash=x3n%2FNn3bQnQLgqUh4G%2BVzg7INXlOglj3cEg9Yw7q%2BYuOkgfagwXtpYBeiLis09P99C7Uut%2FsCnEymjO9awor2LHftZaVEBR4kpwtFn4b3SM49yuBsMrIfXYbHNEmlSxCH%2FPs3%2FxJcq11SxV9rjz9FIKT0%2BbBBSZIJG0Kvt%2BqGK6J8eFZZOwYsKQI1ZMsGEQGn7Wv0Frs1CbumKxBjBs0XdTJ51Js3NMfNBl2tSwqyQqilpKdIkuwKLsAGS4B4Aws"
-          },
-          {
-            "songTitle": "Трек: Nothing Else Matters Metallica Mozart Heroes Official Video",
-            "downloadUrl":
-                "https://cdn1.odt-converter.com/dl?hash=l%2BGAeZLB094uQh3Squx6k9M2RCT6Gf4YIm6PjQipgVgmLiyMjTOvn%2BVPlUqFQ0jLurPPm1ypYmXPMkeinrcZby7vjPJrpalCHqqzWglAi0sl2wOKJZTVD8QCA7PLJTlUQAM3CeVMT2crA0aL1udCrhyCZKR6JQvpXNleRx81HDAeT9rf9h6n6sPnvrnIMyr%2FsIUEP6Iq%2F25VA2RMYNeW%2Bw5betE909lhVJYhxK6kAZOz3f7XCS8Lfogrk4umrl9FtjKk31ADD%2BJP4b%2Fqiyu%2F5w%3D%3D"
+            "musicLogo": "https://mp3beast.cc/img/crop/VVQtYXdRcXc3V18.jpg",
+            "musicLength": 371,
+            "songTitle": "Трек: Metallica Enter Sandman Live Moscow 1991 Hd",
+            "downloadUrl": "https://cdn5.odt-converter.com/dl?hash=YDnJu%2Bb916SUpvkGi0YGAh%2BChbc%2Bp9UiK8jPAq%2FGrd%2F%2Fs2DRvKPAZRN4h55ZybQjAkNy2UD2DZQN80yz%2FA8EZGU852wurbUVu8XIYfF1M8%2Fg9RMHrwvaTsuo8bHewRWlGOPMiCd9iq%2Bf%2B8wlj3RoiSVoqpcO%2B3kVgBf38%2F7RWL4WfR5eyMA4apVCs34Ip%2FR50Ob7g3UElM8QFQTqywlW9QTERQFLz0PkxLWh2wIbtrQ%3D"
           }
         ]
       };

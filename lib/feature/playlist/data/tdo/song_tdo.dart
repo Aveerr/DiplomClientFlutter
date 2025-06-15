@@ -8,6 +8,7 @@ class SongTdo {
   SongTdo({
     required this.songTitle,
     required this.downloadUrl,
+    required this.musicLogo,
   });
 
   @HiveField(0)
@@ -15,6 +16,9 @@ class SongTdo {
 
   @HiveField(1)
   String downloadUrl;
+
+  @HiveField(2)
+  String musicLogo;
 }
 
 extension ToModelSongsExtension on List<SongTdo>? {
@@ -23,6 +27,7 @@ extension ToModelSongsExtension on List<SongTdo>? {
           ?.map((song) => Song(
                 songTitle: song.songTitle,
                 downloadUrl: song.downloadUrl,
+                musicLogo: song.musicLogo,
               ))
           .toList() ??
       [];
@@ -32,5 +37,6 @@ extension ToModelSongExtension on SongTdo? {
   Song toModel() => Song(
         songTitle: this?.songTitle ?? '',
         downloadUrl: this?.downloadUrl ?? '',
+        musicLogo: this?.musicLogo ?? '',
       );
 }
