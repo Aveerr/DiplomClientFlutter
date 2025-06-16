@@ -49,31 +49,22 @@ class _SearchMusicScreenState extends State<SearchMusicScreen> with SingleTicker
     );
   }
 
-  void _searchListener() {
-    if (!(_timer?.isActive ?? true)) {
-      _timer?.cancel();
-      _timer = null;
-    }
-
-    _timer = Timer(const Duration(seconds: 2), () {
-      _bloc.add(SearchPlaylistEvent(_searchController.text));
-    });
-  }
+  // void _searchListener() {
+  //   if (!(_timer?.isActive ?? true)) {
+  //     _timer?.cancel();
+  //     _timer = null;
+  //   }
+  //
+  //   _timer = Timer(const Duration(seconds: 2), () {
+  //     _bloc.add(SearchPlaylistEvent(_searchController.text));
+  //   });
+  // }
 
   @override
   void dispose() {
-    _searchController
-      ..removeListener(_searchListener)
-      ..dispose();
+    _searchController.dispose();
     _animationController.dispose();
     super.dispose();
-  }
-
-  void _handleSearch() {
-    setState(() {
-      _searchQuery = _searchController.text;
-    });
-    _logger.info('Searching for: $_searchQuery');
   }
 
   @override
@@ -160,7 +151,8 @@ class _SearchMusicScreenState extends State<SearchMusicScreen> with SingleTicker
                                       .isNotEmpty,
                                   isPlaying: playerState.playingSong?.songTitle == song.songTitle &&
                                       playerState.isPlaying,
-                                  onLikePressed: () => _favoritesBloc.add(SwitchFavouriteEvent(song)),
+                                  onLikePressed: () =>
+                                      _favoritesBloc.add(SwitchFavouriteEvent(song)),
                                   onPlayPressed: () async => _playerBloc.add(PlayEvent(song)),
                                   musicLogo: song.musicLogo,
                                 );
@@ -200,8 +192,10 @@ class _SearchMusicScreenState extends State<SearchMusicScreen> with SingleTicker
                             title: playerState.playingSong!.songTitle,
                             isFavorite: false,
                             isPlaying: playerState.isPlaying,
-                            onLikePressed: () => _favoritesBloc.add(SwitchFavouriteEvent(playerState.playingSong!)),
-                            onPlayPressed: () async => _playerBloc.add(PlayEvent(playerState.playingSong!)),
+                            onLikePressed: () =>
+                                _favoritesBloc.add(SwitchFavouriteEvent(playerState.playingSong!)),
+                            onPlayPressed: () async =>
+                                _playerBloc.add(PlayEvent(playerState.playingSong!)),
                             musicLogo: playerState.playingSong!.musicLogo,
                           ),
                         ),
@@ -252,13 +246,7 @@ class _SearchMusicScreenState extends State<SearchMusicScreen> with SingleTicker
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
         onTapOutside: (event) => FocusScope.of(context).unfocus(),
-        onSubmitted: (value) {
-          _searchListener();
-        },
-        onChanged: (value) {
-          setState(() {});
-          _searchListener();
-        },
+        onSubmitted: (value) => _bloc.add(SearchPlaylistEvent(_searchController.text)),
       ),
     );
   }
