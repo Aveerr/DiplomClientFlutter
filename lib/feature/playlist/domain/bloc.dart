@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_player/core/middlewares/playlist_middleware.dart';
+import 'package:music_player/core/repositories/hive_repository.dart';
 import 'package:music_player/core/services/music_service.dart';
 import 'package:music_player/feature/playlist/data/song.dart';
 
@@ -36,8 +37,10 @@ class UpdatePlaylistEvent extends PlaylistEvent {
 class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   final MusicService _musicService;
   final PlaylistMiddleware _playlistMiddleware;
+  final StoreRepository _store;
 
-  PlaylistBloc(this._musicService, this._playlistMiddleware) : super(const PlaylistState()) {
+  PlaylistBloc(this._musicService, this._playlistMiddleware, this._store)
+      : super(const PlaylistState()) {
     on<InitializePlaylistEvent>(_handleInitiailizeFavoritesEvent);
     on<UpdatePlaylistEvent>(_handleUpdatePlaylistEvent);
     // on<SearchEvent>(_handleSearchEvent);
@@ -53,6 +56,8 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
 
   Future<void> _handleInitiailizeFavoritesEvent(
       InitializePlaylistEvent event, Emitter<PlaylistState> emit) async {
+    final savedSongs = await _store.getAll();
+
     // await _musicService.getPlaylists(
     //   name: 'metalica',
     //   onSuccess: (response) => emit(state.copyWith(songs: response.results)),

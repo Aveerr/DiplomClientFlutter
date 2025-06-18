@@ -29,13 +29,13 @@ class MusicRepository {
       print("Отправка POST-запроса...");
 
       // Делаем POST-запрос с JSON-заголовком
-      final response = await Dio().get(
-        url,
-        data: requestBody,
-        queryParameters: {
-          'Content-Type': 'application/json', // Указываем тип JSON
-        },
-      );
+      // final response = await Dio().get(
+      //   url,
+      //   data: requestBody,
+      //   queryParameters: {
+      //     'Content-Type': 'application/json', // Указываем тип JSON
+      //   },
+      // );
       // print('========= response = ${response.data}');
 
       final fakeResponse = {
@@ -77,7 +77,7 @@ class MusicRepository {
       // Проверяем статус ответа
       // if (response.statusCode == 200) {
       print("Успешный ответ (200):");
-      final jsonData = response.data;
+      final jsonData = fakeResponse; //response.data;
       print("Полный ответ: $jsonData");
 
       // Пример вывода конкретных полей (если знаете структуру ответа)

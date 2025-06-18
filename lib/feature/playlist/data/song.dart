@@ -13,4 +13,9 @@ class Song with _$Song {
   }) = _Song;
 
   factory Song.fromJson(Map<String, dynamic> json) => _$SongFromJson(json);
+
+  Map<String, dynamic> toJson() => {
+        'songTitle': songTitle,
+        'downloadUrl': downloadUrl,
+      };
 }
