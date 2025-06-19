@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_player/core/middlewares/favourites_middleware.dart';
+import 'package:music_player/core/repositories/hive_repository.dart';
 import 'package:music_player/feature/playlist/data/song.dart';
 
 class FavoritesState {
@@ -40,8 +41,9 @@ class UpdateFavouritesEvent extends FavoritesEvent {
 
 class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
   final FavouritesMiddleware _favouritesMiddleware;
+  final HiveStoreRepository _storeRepository;
 
-  FavoritesBloc(this._favouritesMiddleware) : super(const FavoritesState()) {
+  FavoritesBloc(this._favouritesMiddleware, this._storeRepository) : super(const FavoritesState()) {
     on<InitializeFavoritesEvent>(_handleInitiailizeFavoritesEvent);
     on<SwitchFavouriteEvent>(_handleSwitchFavouriteEvent);
     on<UpdateFavouritesEvent>(_handleUpdateFavouritesEvent);
@@ -66,9 +68,11 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
     final isFavourite = _favouritesMiddleware.favourites
         .where((f) => f.songTitle == event.song.songTitle)
         .isNotEmpty;
-    isFavourite
-        ? _favouritesMiddleware.removeFavourite(event.song)
-        : _favouritesMiddleware.addFavourite(event.song);
+
+    if (isFavourite)
+        { _favouritesMiddleware.removeFavourite(event.song);}
+    else {
+        _favouritesMiddleware.addFavourite(event.song);}
   }
 
   Future<void> _handleUpdateFavouritesEvent(

@@ -52,12 +52,12 @@ Future<void> _initRepositories() async {
   _getIt
     ..registerLazySingleton(() => Client())
     ..registerFactory(() => MusicRepository(_getIt.get()))
-    ..registerFactory<StoreRepository>(
-      () => HiveStoreRepository<FavoriteTdo>(box: favoritesBox),
+    ..registerFactory<HiveStoreRepository>(
+      () => HiveStoreRepository(box: favoritesBox),
       instanceName: _favoriteKey,
     )
-    ..registerFactory<StoreRepository>(
-      () => HiveStoreRepository<PlaylistTdo>(box: playlistBox),
+    ..registerFactory<HiveStoreRepository>(
+      () => HiveStoreRepository(box: playlistBox),
       instanceName: _playlistKey,
     );
 }
@@ -79,10 +79,11 @@ Future<void> _registerBlocs() async {
           instanceName: _playlistKey,
         )))
     ..registerLazySingleton(() => SearchBloc(_getIt.get(), _getIt.get()))
-    ..registerLazySingleton(() => FavoritesBloc(_getIt.get()))
+    ..registerLazySingleton(() => FavoritesBloc(_getIt.get(), _getIt.get(instanceName: _favoriteKey,)))
     ..registerLazySingleton(() => PlayerBloc(
           _getIt.get(),
           _getIt.get(),
+          _getIt.get(instanceName: _playlistKey),
           // _getIt.get(instanceName: _playlistKey),
         ));
 }

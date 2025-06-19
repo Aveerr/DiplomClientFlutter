@@ -69,11 +69,12 @@ class SeekEvent extends PlayerEvent {
 class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   final AudioPlayer _player;
   final PlaylistMiddleware _playlistMiddleware;
-  // final StoreRepository _storeRepository;
+  final HiveStoreRepository _storeRepository;
 
   PlayerBloc(
     this._player,
     this._playlistMiddleware,
+    this._storeRepository,
     // this._storeRepository,
   ) : super(const PlayerState()) {
     on<InitializePlayerEvent>(_handleInitiailizeFavoritesEvent);
@@ -111,6 +112,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     if (_lastSong?.songTitle != event.song.songTitle) {
       print('========= 1');
       _playlistMiddleware.addPlaylist(event.song);
+      await _storeRepository.put(event.song.songTitle, event.song.toJson());
       _lastSong = event.song;
       emit(state.copyWith(playingSong: event.song, isPlaying: true));
 

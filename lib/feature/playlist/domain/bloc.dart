@@ -37,7 +37,7 @@ class UpdatePlaylistEvent extends PlaylistEvent {
 class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   final MusicService _musicService;
   final PlaylistMiddleware _playlistMiddleware;
-  final StoreRepository _store;
+  final HiveStoreRepository _store;
 
   PlaylistBloc(this._musicService, this._playlistMiddleware, this._store)
       : super(const PlaylistState()) {
@@ -57,6 +57,9 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   Future<void> _handleInitiailizeFavoritesEvent(
       InitializePlaylistEvent event, Emitter<PlaylistState> emit) async {
     final savedSongs = await _store.getAll();
+    print('========= savedSongs = ${savedSongs.length}');
+    final songs = savedSongs.map((s) => Song.fromJson(s.map((k, v) => MapEntry(k, v)))).toList();
+    emit(state.copyWith(songs: songs));
 
     // await _musicService.getPlaylists(
     //   name: 'metalica',
