@@ -5,26 +5,28 @@ import 'package:just_audio/just_audio.dart';
 import 'package:music_player/core/middlewares/playlist_middleware.dart';
 import 'package:music_player/core/repositories/hive_repository.dart';
 import 'package:music_player/feature/playlist/data/song.dart';
+import 'package:music_player/feature/playlist/data/tdo/song_tdo.dart';
 
 class PlayerState {
   final Song? playingSong;
   final bool isPlaying;
-  final Duration position;
+  final double position;
   final Duration duration;
 
   const PlayerState({
     this.playingSong,
     this.isPlaying = false,
-    this.position = Duration.zero,
+    this.position = 0,
     this.duration = Duration.zero,
   });
 
   PlayerState copyWith({
     Song? playingSong,
     bool? isPlaying,
-    Duration? position,
+    double? position,
     Duration? duration,
   }) {
+    print('======== copyWith position = $position');
     return PlayerState(
       playingSong: playingSong ?? this.playingSong,
       isPlaying: isPlaying ?? this.isPlaying,
@@ -97,7 +99,10 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     });
 
     _player.positionStream.listen((position) {
-      emit(state.copyWith(position: position));
+      if (position.inSeconds != 0 && state.position == position.inSeconds) return;
+      print('========= v = ${_player.currentIndex}');
+      print('======== c = ${position.inSeconds / (state.playingSong?.musicLength ?? 1)}');
+      emit(state.copyWith(position: position.inSeconds / (state.playingSong?.musicLength ?? 1)));
     });
 
     _player.durationStream.listen((duration) {
@@ -112,7 +117,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     if (_lastSong?.songTitle != event.song.songTitle) {
       print('========= 1');
       _playlistMiddleware.addPlaylist(event.song);
-      await _storeRepository.put(event.song.songTitle, event.song.toJson());
+      await _storeRepository.put(event.song.songTitle, event.song);
       _lastSong = event.song;
       emit(state.copyWith(playingSong: event.song, isPlaying: true));
 

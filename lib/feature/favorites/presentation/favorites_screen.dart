@@ -12,9 +12,11 @@ class FavoriteMusicScreen extends StatefulWidget {
   State<FavoriteMusicScreen> createState() => _FavoriteMusicScreenState();
 }
 
-class _FavoriteMusicScreenState extends State<FavoriteMusicScreen> with SingleTickerProviderStateMixin {
+class _FavoriteMusicScreenState extends State<FavoriteMusicScreen>
+    with SingleTickerProviderStateMixin {
   late final FavoritesBloc _bloc;
   late final PlayerBloc _playerBloc;
+  late final FavoritesBloc _favoritesBloc;
   late final AnimationController _animationController;
 
   @override
@@ -22,6 +24,7 @@ class _FavoriteMusicScreenState extends State<FavoriteMusicScreen> with SingleTi
     super.initState();
     _bloc = instanceOf();
     _playerBloc = instanceOf();
+    _favoritesBloc = instanceOf();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -46,10 +49,7 @@ class _FavoriteMusicScreenState extends State<FavoriteMusicScreen> with SingleTi
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Colors.white,
-                  Colors.orange.shade200
-                ],
+                colors: [Colors.white, Colors.orange.shade200],
               ),
             ),
             child: SafeArea(
@@ -191,13 +191,23 @@ class _FavoriteMusicScreenState extends State<FavoriteMusicScreen> with SingleTi
                         ),
                       ],
                     ),
-                    child: PlaylistCell(
-                      title: playerState.playingSong!.songTitle,
-                      isFavorite: true,
-                      isPlaying: playerState.isPlaying,
-                      onLikePressed: () => _bloc.add(SwitchFavouriteEvent(playerState.playingSong!)),
-                      onPlayPressed: () async => _playerBloc.add(PlayEvent(playerState.playingSong!)),
-                      musicLogo: playerState.playingSong!.musicLogo,
+                    child: BlocBuilder<FavoritesBloc, FavoritesState>(
+                      bloc: _favoritesBloc,
+                      builder: (context, favoritesState) {
+                        return PlaylistCell(
+                          title: playerState.playingSong!.songTitle,
+                          isBookmark: true,
+                          isFavorite: favoritesState.favourites
+                              .where((f) => f.songTitle == playerState.playingSong!.songTitle)
+                              .isNotEmpty,
+                          isPlaying: playerState.isPlaying,
+                          onLikePressed: () =>
+                              _bloc.add(SwitchFavouriteEvent(playerState.playingSong!)),
+                          onPlayPressed: () async =>
+                              _playerBloc.add(PlayEvent(playerState.playingSong!)),
+                          musicLogo: playerState.playingSong!.musicLogo,
+                        );
+                      },
                     ),
                   ),
                 )

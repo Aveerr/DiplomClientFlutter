@@ -57,8 +57,12 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   Future<void> _handleInitiailizeFavoritesEvent(
       InitializePlaylistEvent event, Emitter<PlaylistState> emit) async {
     final savedSongs = await _store.getAll();
-    print('========= savedSongs = ${savedSongs.length}');
-    final songs = savedSongs.map((s) => Song.fromJson(s.map((k, v) => MapEntry(k, v)))).toList();
+    print('========= savedSongs = ${savedSongs.length} ${savedSongs.first}');
+    final songs = savedSongs.where((s) => s.songTitle.isNotEmpty).toList();
+    for (var s in songs) {
+      _playlistMiddleware.addPlaylist(s);
+    }
+
     emit(state.copyWith(songs: songs));
 
     // await _musicService.getPlaylists(

@@ -1,6 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:music_player/feature/playlist/data/tdo/favorite_tdo.dart';
-import 'package:music_player/feature/playlist/data/tdo/playlist_tdo.dart';
 import 'package:music_player/feature/playlist/data/tdo/song_tdo.dart';
 
 abstract class HiveBox {
@@ -16,7 +14,5 @@ abstract class HiveBox {
 
   static Future<void> registerAdapters() async {
     Hive.registerAdapter(SongTdoAdapter(), override: true);
-    Hive.registerAdapter(PlaylistTdoAdapter(), override: true);
-    Hive.registerAdapter(FavoriteTdoAdapter(), override: true);
   }
 }

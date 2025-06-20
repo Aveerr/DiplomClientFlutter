@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return BlocBuilder<PlayerBloc, PlayerState>(
       bloc: _playerBloc,
       builder: (context, playerState) {
+        print('======== <PlayerBloc build');
         return Scaffold(
           extendBody: true,
           body: Container(
@@ -109,7 +110,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                           itemCount: state.songs.length,
                           itemBuilder: (context, index) {
+                            print('========= state.songs = ${state.songs}');
                             final song = state.songs[index];
+                            print('========= song.musicLogo = ${song.musicLogo}');
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 8),
                               child: PlaylistCell(
@@ -137,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   offset: Offset.zero,
                   child: Container(
                     width: 440,
-                    height: 100,
+                    height: 120,
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -155,14 +158,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         ),
                       ],
                     ),
-                    child: PlaylistCell(
-                      title: playerState.playingSong!.songTitle,
-                      isFavorite: false,
-                      isPlaying: playerState.isPlaying,
-                      onLikePressed: () => _favoritesBloc.add(SwitchFavouriteEvent(playerState.playingSong!)),
-                      onPlayPressed: () async => _playerBloc.add(PlayEvent(playerState.playingSong!)),
-                      musicLogo: playerState.playingSong!.musicLogo,
-                    ),
+                    child: BlocBuilder<FavoritesBloc, FavoritesState>(
+                        bloc: _favoritesBloc,
+                        builder: (context, favoritesState) {
+                          return PlaylistCell(
+                            title: playerState.playingSong!.songTitle,
+                            isBookmark: true,
+                            position: playerState.position,
+                            isFavorite: favoritesState.favourites
+                                .where((f) => f.songTitle == playerState.playingSong!.songTitle)
+                                .isNotEmpty,
+                            isPlaying: playerState.isPlaying,
+                            onLikePressed: () =>
+                                _favoritesBloc.add(SwitchFavouriteEvent(playerState.playingSong!)),
+                            onPlayPressed: () async =>
+                                _playerBloc.add(PlayEvent(playerState.playingSong!)),
+                            musicLogo: playerState.playingSong!.musicLogo,
+                          );
+                        }),
                   ),
                 )
               : null,

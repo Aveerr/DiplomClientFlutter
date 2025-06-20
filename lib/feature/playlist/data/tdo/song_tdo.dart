@@ -9,6 +9,7 @@ class SongTdo {
     required this.songTitle,
     required this.downloadUrl,
     required this.musicLogo,
+    required this.musicLength,
   });
 
   @HiveField(0)
@@ -19,6 +20,9 @@ class SongTdo {
 
   @HiveField(2)
   String musicLogo;
+
+  @HiveField(3)
+  int musicLength;
 }
 
 extension ToModelSongsExtension on List<SongTdo>? {
@@ -28,6 +32,7 @@ extension ToModelSongsExtension on List<SongTdo>? {
                 songTitle: song.songTitle,
                 downloadUrl: song.downloadUrl,
                 musicLogo: song.musicLogo,
+                musicLength: song.musicLength,
               ))
           .toList() ??
       [];
@@ -38,5 +43,15 @@ extension ToModelSongExtension on SongTdo? {
         songTitle: this?.songTitle ?? '',
         downloadUrl: this?.downloadUrl ?? '',
         musicLogo: this?.musicLogo ?? '',
+        musicLength: this?.musicLength ?? 0,
+      );
+}
+
+extension ToTdoModelSongExtension on Song? {
+  SongTdo toTdoModel() => SongTdo(
+        songTitle: this?.songTitle ?? '',
+        downloadUrl: this?.downloadUrl ?? '',
+        musicLogo: this?.musicLogo ?? '',
+        musicLength: this?.musicLength ?? 0,
       );
 }

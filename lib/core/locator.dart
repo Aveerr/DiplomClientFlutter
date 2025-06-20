@@ -12,8 +12,6 @@ import 'package:music_player/core/services/music_service.dart';
 import 'package:music_player/core/utils/hive_box.dart';
 import 'package:music_player/feature/favorites/domain/bloc.dart';
 import 'package:music_player/feature/player/domain/bloc.dart';
-import 'package:music_player/feature/playlist/data/tdo/favorite_tdo.dart';
-import 'package:music_player/feature/playlist/data/tdo/playlist_tdo.dart';
 import 'package:music_player/feature/playlist/domain/bloc.dart';
 import 'package:music_player/feature/search/domain/bloc.dart';
 import 'package:path_provider/path_provider.dart';
@@ -79,7 +77,11 @@ Future<void> _registerBlocs() async {
           instanceName: _playlistKey,
         )))
     ..registerLazySingleton(() => SearchBloc(_getIt.get(), _getIt.get()))
-    ..registerLazySingleton(() => FavoritesBloc(_getIt.get(), _getIt.get(instanceName: _favoriteKey,)))
+    ..registerLazySingleton(() => FavoritesBloc(
+        _getIt.get(),
+        _getIt.get(
+          instanceName: _favoriteKey,
+        )))
     ..registerLazySingleton(() => PlayerBloc(
           _getIt.get(),
           _getIt.get(),

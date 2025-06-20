@@ -51,7 +51,7 @@ class PlayerScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    
+
                     // Основной контент
                     Expanded(
                       child: SingleChildScrollView(
@@ -83,9 +83,9 @@ class PlayerScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            
+
                             const SizedBox(height: 32),
-                            
+
                             // Информация о песне
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -111,9 +111,9 @@ class PlayerScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            
+
                             const SizedBox(height: 32),
-                            
+
                             // Прогресс-бар
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -134,12 +134,12 @@ class PlayerScreen extends StatelessWidget {
                                       overlayColor: Colors.deepOrange.withOpacity(0.2),
                                     ),
                                     child: Slider(
-                                      value: playerState.position.inSeconds.toDouble(),
+                                      value: playerState.position,
                                       max: playerState.duration.inSeconds.toDouble(),
                                       onChanged: (value) {
                                         context.read<PlayerBloc>().add(
-                                          SeekEvent(Duration(seconds: value.toInt())),
-                                        );
+                                              SeekEvent(Duration(seconds: value.toInt())),
+                                            );
                                       },
                                     ),
                                   ),
@@ -149,7 +149,7 @@ class PlayerScreen extends StatelessWidget {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          _formatDuration(playerState.position),
+                                          _formatDuration(playerState.duration),
                                           style: TextStyle(
                                             color: Colors.grey[600],
                                             fontSize: 12,
@@ -168,9 +168,9 @@ class PlayerScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            
+
                             const SizedBox(height: 32),
-                            
+
                             // Кнопки управления
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -190,8 +190,8 @@ class PlayerScreen extends StatelessWidget {
                                   IconButton(
                                     onPressed: () {
                                       context.read<PlayerBloc>().add(
-                                        const PreviousEvent(),
-                                      );
+                                            const PreviousEvent(),
+                                          );
                                     },
                                     icon: const Icon(
                                       Icons.skip_previous,
@@ -215,12 +215,12 @@ class PlayerScreen extends StatelessWidget {
                                       onPressed: () {
                                         if (playerState.isPlaying) {
                                           context.read<PlayerBloc>().add(
-                                            const PauseEvent(),
-                                          );
+                                                const PauseEvent(),
+                                              );
                                         } else {
                                           context.read<PlayerBloc>().add(
-                                            PlayEvent(playerState.playingSong!),
-                                          );
+                                                PlayEvent(playerState.playingSong!),
+                                              );
                                         }
                                       },
                                       icon: Icon(
@@ -235,8 +235,8 @@ class PlayerScreen extends StatelessWidget {
                                   IconButton(
                                     onPressed: () {
                                       context.read<PlayerBloc>().add(
-                                        const NextEvent(),
-                                      );
+                                            const NextEvent(),
+                                          );
                                     },
                                     icon: const Icon(
                                       Icons.skip_next,
@@ -247,8 +247,8 @@ class PlayerScreen extends StatelessWidget {
                                   IconButton(
                                     onPressed: () {
                                       context.read<FavoritesBloc>().add(
-                                        SwitchFavouriteEvent(playerState.playingSong!),
-                                      );
+                                            SwitchFavouriteEvent(playerState.playingSong!),
+                                          );
                                     },
                                     icon: Icon(
                                       isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -259,7 +259,7 @@ class PlayerScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            
+
                             const SizedBox(height: 32),
                           ],
                         ),
@@ -281,4 +281,4 @@ class PlayerScreen extends StatelessWidget {
     final seconds = twoDigits(duration.inSeconds.remainder(60));
     return '$minutes:$seconds';
   }
-} 
+}

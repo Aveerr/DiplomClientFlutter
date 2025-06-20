@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:music_player/feature/playlist/data/tdo/song_tdo.dart';
 
 part 'song.freezed.dart';
 part 'song.g.dart';
@@ -17,5 +18,16 @@ class Song with _$Song {
   Map<String, dynamic> toJson() => {
         'songTitle': songTitle,
         'downloadUrl': downloadUrl,
+        'musicLength': musicLength,
+        'musicLogo': musicLogo,
       };
+}
+
+extension ToTdoModelPlaylistExtension on Song? {
+  SongTdo toModel() => SongTdo(
+        songTitle: this?.songTitle ?? '',
+        downloadUrl: this?.downloadUrl ?? '',
+        musicLogo: this?.musicLogo ?? '',
+        musicLength: this?.musicLength ?? 0,
+      );
 }
