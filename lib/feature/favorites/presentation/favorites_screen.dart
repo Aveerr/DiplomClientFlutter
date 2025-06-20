@@ -167,52 +167,6 @@ class _FavoriteMusicScreenState extends State<FavoriteMusicScreen>
               ),
             ),
           ),
-          floatingActionButton: playerState.playingSong != null
-              ? AnimatedSlide(
-                  duration: const Duration(milliseconds: 300),
-                  offset: Offset.zero,
-                  child: Container(
-                    width: 440,
-                    height: 100,
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.deepOrangeAccent.withOpacity(0.0),
-                          Colors.white.withOpacity(0.0),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(35),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 20,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: BlocBuilder<FavoritesBloc, FavoritesState>(
-                      bloc: _favoritesBloc,
-                      builder: (context, favoritesState) {
-                        return PlaylistCell(
-                          title: playerState.playingSong!.songTitle,
-                          isBookmark: true,
-                          isFavorite: favoritesState.favourites
-                              .where((f) => f.songTitle == playerState.playingSong!.songTitle)
-                              .isNotEmpty,
-                          isPlaying: playerState.isPlaying,
-                          onLikePressed: () =>
-                              _bloc.add(SwitchFavouriteEvent(playerState.playingSong!)),
-                          onPlayPressed: () async =>
-                              _playerBloc.add(PlayEvent(playerState.playingSong!)),
-                          musicLogo: playerState.playingSong!.musicLogo,
-                        );
-                      },
-                    ),
-                  ),
-                )
-              : null,
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         );
       },
     );

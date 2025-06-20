@@ -10,6 +10,7 @@ class PlaylistCell extends StatelessWidget {
   final bool isBookmark;
   final VoidCallback onLikePressed;
   final VoidCallback onPlayPressed;
+  final void Function(double)? onSeek;
   final String musicLogo;
   final double? position;
 
@@ -23,6 +24,7 @@ class PlaylistCell extends StatelessWidget {
     required this.musicLogo,
     this.isBookmark = false,
     this.position,
+    this.onSeek,
   });
 
   @override
@@ -57,20 +59,11 @@ class PlaylistCell extends StatelessWidget {
         child: InkWell(
           onTap: onPlayPressed,
           borderRadius: BorderRadius.circular(20),
-          child: Column(
-            children: [
-              if (isBookmark)
-                SizedBox(
-                  height: 10,
-                  child: Slider(
-                    value: position ?? 0.0,
-                    thumbColor: Colors.deepOrangeAccent,
-                    onChanged: (a) {},
-                  ),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Row(
                   children: [
                     Hero(
                       tag: 'music_logo_$title',
@@ -169,8 +162,21 @@ class PlaylistCell extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-            ],
+                if (isBookmark) ...[
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 10,
+                    child: Slider(
+                      value: position ?? 0.0,
+                      thumbColor: Colors.deepOrangeAccent,
+                      onChanged: (_) {},
+                      onChangeEnd: onSeek,
+                      activeColor: Colors.orange,
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
         ),
       ),

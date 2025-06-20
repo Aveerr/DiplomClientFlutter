@@ -64,8 +64,9 @@ class NextEvent extends PlayerEvent {
 
 class SeekEvent extends PlayerEvent {
   final Duration position;
+  final bool needSeekController;
 
-  const SeekEvent(this.position);
+  const SeekEvent(this.position, {this.needSeekController = false});
 }
 
 class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
@@ -102,7 +103,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
       if (position.inSeconds != 0 && state.position == position.inSeconds) return;
       print('========= v = ${_player.currentIndex}');
       print('======== c = ${position.inSeconds / (state.playingSong?.musicLength ?? 1)}');
-      emit(state.copyWith(position: position.inSeconds / (state.playingSong?.musicLength ?? 1)));
+      add(SeekEvent(position));
     });
 
     _player.durationStream.listen((duration) {
@@ -116,8 +117,10 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     print('======= a = ${_lastSong?.songTitle} b = ${event.song.songTitle}');
     if (_lastSong?.songTitle != event.song.songTitle) {
       print('========= 1');
+
       _playlistMiddleware.addPlaylist(event.song);
       await _storeRepository.put(event.song.songTitle, event.song);
+
       _lastSong = event.song;
       emit(state.copyWith(playingSong: event.song, isPlaying: true));
 
@@ -152,7 +155,15 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   }
 
   Future<void> _handleSeekEvent(SeekEvent event, Emitter<PlayerState> emit) async {
-    await _player.seek(event.position);
+    if (event.needSeekController) {
+      // await _player.stop();
+      print('======== event.position = ${event.position}');
+
+      await _player.seek(event.position);
+      await _player.play();
+    }
+    emit(
+        state.copyWith(position: event.position.inSeconds / (state.playingSong?.musicLength ?? 1)));
   }
 
   @override

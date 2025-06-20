@@ -13,6 +13,7 @@ class MusicRepository {
 
   Future<Either<int?, SongsResponse?>> searchSongs({
     required String name,
+    required String parserName,
   }) async {
     // Замените на ваш URL (localhost или IP)
     final url = 'http://62.60.149.142:3000/api/parse/';
@@ -22,21 +23,21 @@ class MusicRepository {
     // Тело запроса в формате JSON
     final requestBody = {
       "songName": name, // Замените на реальное название
-      "parserType": "mp3beast" // Или другой тип парсера
+      "parserType": parserName // Или другой тип парсера
     };
 
     try {
       print("Отправка POST-запроса...");
 
       // Делаем POST-запрос с JSON-заголовком
-      // final response = await Dio().get(
-      //   url,
-      //   data: requestBody,
-      //   queryParameters: {
-      //     'Content-Type': 'application/json', // Указываем тип JSON
-      //   },
-      // );
-      // print('========= response = ${response.data}');
+      final response = await Dio().get(
+        url,
+        data: requestBody,
+        queryParameters: {
+          'Content-Type': 'application/json', // Указываем тип JSON
+        },
+      );
+      print('========= response = ${response.data}');
 
       final fakeResponse = {
         "message": "success",
@@ -77,7 +78,7 @@ class MusicRepository {
       // Проверяем статус ответа
       // if (response.statusCode == 200) {
       print("Успешный ответ (200):");
-      final jsonData = fakeResponse; //response.data;
+      final jsonData = response.data; // fakeResponse;
       print("Полный ответ: $jsonData");
 
       // Пример вывода конкретных полей (если знаете структуру ответа)

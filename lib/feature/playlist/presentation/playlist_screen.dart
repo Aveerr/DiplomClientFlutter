@@ -40,148 +40,111 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PlayerBloc, PlayerState>(
-      bloc: _playerBloc,
-      builder: (context, playerState) {
-        print('======== <PlayerBloc build');
-        return Scaffold(
-          extendBody: true,
-          body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white,
-                  Colors.orange.shade200,
-                ],
-              ),
-            ),
-            child: SafeArea(
-              child: BlocBuilder<PlaylistBloc, PlaylistState>(
-                bloc: _bloc,
-                builder: (context, state) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Scaffold(
+      extendBody: true,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              Colors.orange.shade200,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: BlocBuilder<PlaylistBloc, PlaylistState>(
+            bloc: _bloc,
+            builder: (context, state) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Playlist',
-                                  style: TextStyle(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  '${state.songs.length} songs',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.deepOrangeAccent.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
+                            const Text(
+                              'Playlist',
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
                               ),
-                              padding: const EdgeInsets.all(12),
-                              child: Icon(
-                                Icons.shuffle,
-                                color: Colors.deepOrangeAccent,
-                                size: 24,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${state.songs.length} songs',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      Expanded(
-                        child: ListView.builder(
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.deepOrangeAccent.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.all(12),
+                          child: Icon(
+                            Icons.shuffle,
+                            color: Colors.deepOrangeAccent,
+                            size: 24,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: BlocBuilder<PlayerBloc, PlayerState>(
+                      bloc: _playerBloc,
+                      builder: (context, playerState) {
+                        print('======== <PlayerBloc build');
+                        return ListView.builder(
                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                           itemCount: state.songs.length,
                           itemBuilder: (context, index) {
                             print('========= state.songs = ${state.songs}');
                             final song = state.songs[index];
                             print('========= song.musicLogo = ${song.musicLogo}');
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: PlaylistCell(
-                                title: song.songTitle,
-                                isFavorite: false,
-                                isPlaying: playerState.playingSong?.songTitle == song.songTitle &&
-                                    playerState.isPlaying,
-                                onLikePressed: () => _favoritesBloc.add(SwitchFavouriteEvent(song)),
-                                onPlayPressed: () async => _playerBloc.add(PlayEvent(song)),
-                                musicLogo: song.musicLogo,
-                              ),
+                            return BlocBuilder<FavoritesBloc, FavoritesState>(
+                              bloc: _favoritesBloc,
+                              builder: (context, favoritesState) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: PlaylistCell(
+                                    title: song.songTitle,
+                                    isFavorite: favoritesState.favourites
+                                        .where((f) => f.songTitle == song.songTitle)
+                                        .isNotEmpty,
+                                    isPlaying:
+                                        playerState.playingSong?.songTitle == song.songTitle &&
+                                            playerState.isPlaying,
+                                    onLikePressed: () =>
+                                        _favoritesBloc.add(SwitchFavouriteEvent(song)),
+                                    onPlayPressed: () async => _playerBloc.add(PlayEvent(song)),
+                                    musicLogo: song.musicLogo,
+                                  ),
+                                );
+                              },
                             );
                           },
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-          floatingActionButton: playerState.playingSong != null
-              ? AnimatedSlide(
-                  duration: const Duration(milliseconds: 300),
-                  offset: Offset.zero,
-                  child: Container(
-                    width: 440,
-                    height: 120,
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.deepOrangeAccent.withOpacity(0.0),
-                          Colors.white.withOpacity(0.0),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(35),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 20,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                    child: BlocBuilder<FavoritesBloc, FavoritesState>(
-                        bloc: _favoritesBloc,
-                        builder: (context, favoritesState) {
-                          return PlaylistCell(
-                            title: playerState.playingSong!.songTitle,
-                            isBookmark: true,
-                            position: playerState.position,
-                            isFavorite: favoritesState.favourites
-                                .where((f) => f.songTitle == playerState.playingSong!.songTitle)
-                                .isNotEmpty,
-                            isPlaying: playerState.isPlaying,
-                            onLikePressed: () =>
-                                _favoritesBloc.add(SwitchFavouriteEvent(playerState.playingSong!)),
-                            onPlayPressed: () async =>
-                                _playerBloc.add(PlayEvent(playerState.playingSong!)),
-                            musicLogo: playerState.playingSong!.musicLogo,
-                          );
-                        }),
                   ),
-                )
-              : null,
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        );
-      },
+                ],
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

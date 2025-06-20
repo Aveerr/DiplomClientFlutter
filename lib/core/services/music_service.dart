@@ -13,7 +13,7 @@ class MusicService {
     required void Function(SongsResponse) onSuccess,
     required void Function(String) onError,
   }) async {
-    final response = await _musicRepository.searchSongs(name: name);
+    final response = await _musicRepository.searchSongs(name: name, parserName: "mp3beast");
 
     response.fold(
       (l) => onError(_generalErrorMessage),
